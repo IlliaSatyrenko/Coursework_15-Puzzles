@@ -212,7 +212,7 @@ namespace Coursework
             {
                 customTextBoxContainer[i].Text = matrix[i].ToString();
                 customTextBoxContainer[i].CustomValidate();
-                if (customTextBoxContainer[i].isError || customTextBoxContainer[i].isRepeatable)
+                if (customTextBoxContainer[i].isError)
                 {
                     ErrorTextBox.Text = "Стан гри не є валідним, некоректні позиції відмічені";
                     ErrorTextBox.Visible = true;
