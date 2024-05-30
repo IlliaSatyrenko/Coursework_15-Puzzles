@@ -1,6 +1,8 @@
-﻿namespace Coursework
+﻿using static Coursework.Common;
+
+namespace Coursework
 {
-    public class State: Common
+    public class State
     {
         public byte[] numbers = new byte[stateSize];
 

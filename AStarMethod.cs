@@ -1,6 +1,8 @@
-﻿namespace Coursework
+﻿using static Coursework.Common;
+
+namespace Coursework
 {
-    public class AStarMethod : Common
+    public class AStarMethod
     {
         // Черга з пріоритетом, що містить усі обраховані стани
         private PriorityQueue<(byte[], ushort, EZeroDirection?), ushort> stateList = new PriorityQueue<(byte[], ushort, EZeroDirection?), ushort>();

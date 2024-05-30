@@ -104,13 +104,35 @@ namespace Coursework
         //Метод кнопки відкриття збереженої гри
         private void uploadButton_Click(object sender, EventArgs e)
         {
+            ErrorTextBox.Visible = false;
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string[] lines = File.ReadAllLines(openFileDialog.FileName);
 
-                if (lines[0] == signature)
+                if (lines.Length == 3 && lines[0] == signature && lines[2].Length < 7 && lines[1].Split(" ").Length == 17)
                 {
                     string[] numbers = lines[1].Split(" ");
+                    for (int i = 0; i < numbers.Length - 1; i++)
+                    {
+                        if (numbers.Count(num => num == numbers[i]) > 1)
+                        {
+                            ErrorTextBox.Text = "Файл не був збережений цією програмою.";
+                            ErrorTextBox.Visible = true;
+                            return;
+                        }
+                    }
+                    for (int i = 0; i < numbers.Length - 1; i++)
+                    {
+                        customTextBoxContainer[i].Text = numbers[i];
+                        customTextBoxContainer[i].CustomValidate();
+                        if (customTextBoxContainer[i].isError)
+                        {
+                            ErrorTextBox.Text = "Файл не був збережений цією програмою.";
+                            ErrorTextBox.Visible = true;
+                            return;
+                        }
+                    }
+                    
                     for (int i = 0; i < numbers.Length - 1; i++)
                     {
                         if (numbers[i] != "0")
@@ -123,12 +145,7 @@ namespace Coursework
 
                             rewriteZeroNeighbors(i);
                         }
-                        customTextBoxContainer[i].Text = numbers[i];
                         matrix[i] = byte.Parse(numbers[i]);
-                    }
-                    foreach (var customTextBox in customTextBoxContainer)
-                    {
-                        customTextBox.CustomValidate();
                     }
 
                     MovesCounter = int.Parse(lines[2]);
@@ -188,6 +205,18 @@ namespace Coursework
                 else
                 {
                     matrix[tile.tileIndex] = 0;
+                }
+            }
+
+            for (int i = 0; i < stateSize; i++)
+            {
+                customTextBoxContainer[i].Text = matrix[i].ToString();
+                customTextBoxContainer[i].CustomValidate();
+                if (customTextBoxContainer[i].isError || customTextBoxContainer[i].isRepeatable)
+                {
+                    ErrorTextBox.Text = "Стан гри не є валідним, некоректні позиції відмічені";
+                    ErrorTextBox.Visible = true;
+                    return;
                 }
             }
 
@@ -443,7 +472,7 @@ namespace Coursework
                 }
                 foreach (var customTextBox in customTextBoxContainer)
                 {
-                    if (customTextBox.isRepeatable && matrix.Count(num => num == byte.Parse(customTextBox.Text)) < 2)
+                    if (!customTextBox.isError && customTextBox.isRepeatable && matrix.Count(num => num == byte.Parse(customTextBox.Text)) < 2)
                     {
                         customTextBox.isRepeatable = false;
                         customTextBox.BackColor = Color.White;
